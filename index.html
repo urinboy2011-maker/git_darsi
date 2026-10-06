@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- GOOGLE QIDIRUV TIZIMI VA SEO MA'LUMOTLARI -->
+  <title>AI Project</title>
+  <meta name="title" content="AI Project">
+  <meta name="description" content="AI Project - Olimjonov O'rinboy tomonidan yaratilgan rasmiy sun'iy intellekt platformasi va onlayn Python, JavaScript, HTML compiler.">
+  <meta name="keywords" content="AI Project, ai project, aiproject, online compiler, python compiler, javascript compiler, O'rinboy">
+  <meta name="author" content="O'rinboy">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  
+  <!-- Rasmiy sayt manzili (Canonical) -->
+  <link rel="canonical" href="https://ai-projectuz.netlify.app/">
+
+  <!-- Open Graph / Facebook / Telegram -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ai-projectuz.netlify.app/">
+  <meta property="og:title" content="AI Project">
+  <meta property="og:description" content="AI Project - Olimjonov O'rinboy tomonidan yaratilgan Sun'iy Intellekt va Online Compiler.">
+  <meta property="og:site_name" content="AI Project">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://ai-projectuz.netlify.app/">
+  <meta name="twitter:title" content="AI Project">
+  <meta name="twitter:description" content="AI Project - Aqlli sun'iy intellekt va interaktiv dasturlash tizimi.">
+
+  <!-- Google Robotlari uchun maxsus strukturaviy ma'lumot (Schema.org) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI Project",
+    "alternateName": ["ai project", "AIProject"],
+    "url": "https://ai-projectuz.netlify.app/",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "All",
+    "creator": {
+      "@type": "Person",
+      "name": "O'rinboy"
+    },
+    "description": "Olimjonov O'rinboy tomonidan yaratilgan sun'iy intellekt tizimi va onlayn dasturlash muharriri."
+  }
+  </script>
+
+  <!-- Font Awesome piktogrammalari -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Python kodini brauzerda ishga tushiruvchi Pyodide dvigateli -->
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-header: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-orange: #ff5414;
+      --accent-orange-hover: #e04407;
+      --editor-bg: #ffffff;
+      --editor-sidebar: #ffffff;
+      --output-bg: #ffffff;
+    }
+
+    body.dark-mode {
+      --bg-page: #0b0f19;
+      --bg-header: #111827;
+      --border-color: #1f2937;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --editor-bg: #0d121f;
+      --editor-sidebar: #111827;
+      --output-bg: #0d121f;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background: var(--bg-page);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Asosiy Yuqori Navigatsiya */
+    .top-global-nav {
+      height: 46px;
+      background: #090c15;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 50;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-cube-mini {
+      width: 22px;
+      height: 22px;
+      background: linear-gradient(135deg, #00f0ff, #b537f2, #ff5414);
+      border-radius: 5px;
+      box-shadow: 0 0 10px #00f0ff;
+    }
+
+    .brand-text {
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 0.5px;
+      background: linear-gradient(90deg, #00f0ff, #c084fc, #ff5414);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+    }
+
+    .nav-toggle-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .nav-tab-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      padding: 5px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .nav-tab-btn.active, .nav-tab-btn:hover {
+      background: rgba(0, 240, 255, 0.18);
+      border-color: #00f0ff;
+      color: #00f0ff;
+    }
+
+    .view-content {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .tab-section {
+      position: absolute;
+      inset: 0;
+      display: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    .tab-section.active {
+      display: flex;
+    }
+
+    /* ================= COMPILER INTERFEYSI ================= */
+    .ide-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-page);
+    }
+
+    .ide-left-bar {
+      width: 54px;
+      background: var(--editor-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 0;
+      gap: 12px;
+      z-index: 20;
+    }
+
+    .ide-mode-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      color: #475569;
+      background: transparent;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .ide-mode-btn:hover {
+      background: rgba(0, 0, 0, 0.04);
+      color: var(--accent-orange);
+    }
+
+    .ide-mode-btn.active {
+      background: var(--accent-orange);
+      color: #ffffff !important;
+      box-shadow: 0 2px 8px rgba(255, 84, 20, 0.35);
+    }
+
+    .ide-workspace {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ide-toolbar {
+      height: 48px;
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+    }
+
+    .toolbar-left, .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Orqaga tugmasi */
+    .round-back-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-main);
+      background: var(--bg-page);
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .round-back-btn:hover {
+      background: #e2e8f0;
+      transform: scale(1.05);
+    }
+
+    .round-back-btn:active {
+      transform: scale(0.95);
+    }
+
+    .active-filename-display {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-main);
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    .html-subtabs {
+      display: none;
+      gap: 4px;
+    }
+
+    .html-subtab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .html-subtab-btn.active {
+      color: var(--accent-orange);
+      border-color: rgba(255, 84, 20, 0.2);
+      background: rgba(255, 84, 20, 0.06);
+      font-weight: 600;
+    }
+
+    .tool-icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-header);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .tool-icon-btn:hover {
+      color: var(--text-main);
+      border-color: #94a3b8;
+    }
+
+    .run-action-btn {
+      background: var(--accent-orange);
+      color: #ffffff;
+      border: none;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(255, 84, 20, 0.3);
+      transition: 0.15s;
+    }
+
+    .run-action-btn:hover {
+      background: var(--accent-orange-hover);
+    }
+
+    .ide-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .code-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border-color);
+      background: var(--editor-bg);
+      position: relative;
+    }
+
+    .editor-line-wrapper {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .line-numbers {
+      width: 40px;
+      padding: 14px 0;
+      text-align: center;
+      color: #94a3b8;
+      font-family: Consolas, 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      border-right: 1px solid var(--border-color);
+      user-select: none;
+      background: rgba(0, 0, 0, 0.01);
+    }
+
+    .code-textarea {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      outline: none;
+      resize: none;
+      font-family: Consolas, 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      background: transparent;
+      color: var(--text-main);
+      white-space: pre;
+    }
+
+    /* ====================================================
+       BRAUZER / NATIJA VA BUTUN EKRANGA KATTALASHTIRISH
+       ==================================================== */
+    .result-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--output-bg);
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    /* Brauzer butun ekranga ochilganda */
+    .result-panel.browser-maximized {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 999999 !important;
+    }
+
+    .result-header {
+      height: 42px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .max-exit-btn {
+      display: none;
+      background: rgba(255, 84, 20, 0.12);
+      color: var(--accent-orange);
+      border: 1px solid var(--accent-orange);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .result-panel.browser-maximized .max-exit-btn {
+      display: flex;
+    }
+
+    .result-body {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preview-browser-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #ffffff;
+      display: none;
+    }
+
+    .terminal-console-view {
+      width: 100%;
+      height: 100%;
+      padding: 16px;
+      overflow-y: auto;
+      font-family: Consolas, 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #334155;
+      white-space: pre-wrap;
+    }
+
+    body.dark-mode .terminal-console-view {
+      color: #38bdf8;
+    }
+
+    /* Saqlangan kodlar oynasi */
+    .saved-modal-overlay {
+      position: absolute;
+      top: 48px;
+      left: 0;
+      width: 320px;
+      bottom: 0;
+      background: #ffffff;
+      border-right: 1px solid #cbd5e1;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.08);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+    }
+
+    body.dark-mode .saved-modal-overlay {
+      background: #111827;
+      border-right-color: #1f2937;
+    }
+
+    .saved-modal-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .storage-info {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: normal;
+    }
+
+    .saved-items-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .saved-file-card {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-page);
+    }
+
+    .saved-file-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .saved-file-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .saved-file-date {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .saved-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .open-btn {
+      background: #ffedd5;
+      color: #ea580c;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .open-btn:hover {
+      background: #fed7aa;
+    }
+
+    .del-btn {
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 13px;
+      border: none;
+      background: transparent;
+    }
+
+    .del-btn:hover {
+      color: #ef4444;
+    }
+
+    /* ================= AI HUB & 3D KUB ================= */
+    .ai-view-wrapper {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 35% 50%, #171b38 0%, #080912 100%);
+      color: #fff;
+    }
+
+    .cube-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      perspective: 1000px;
+      padding: 20px;
+    }
+
+    .cosmic-cube {
+      width: 160px;
+      height: 160px;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: rotate-cube 18s infinite linear;
+    }
+
+    @keyframes rotate-cube {
+      0% { transform: rotateX(20deg) rotateY(0deg); }
+      100% { transform: rotateX(380deg) rotateY(360deg); }
+    }
+
+    .cube-face {
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      background: rgba(14, 21, 58, 0.65);
+      border: 2px solid rgba(0, 240, 255, 0.7);
+      box-shadow: inset 0 0 25px rgba(181, 55, 242, 0.6), 0 0 15px rgba(0, 240, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      color: #fff;
+      backdrop-filter: blur(2px);
+    }
+
+    .front  { transform: translateZ(80px); }
+    .back   { transform: rotateY(180deg) translateZ(80px); }
+    .right  { transform: rotateY(90deg) translateZ(80px); }
+    .left   { transform: rotateY(-90deg) translateZ(80px); }
+    .top    { transform: rotateX(90deg) translateZ(80px); }
+    .bottom { transform: rotateX(-90deg) translateZ(80px); }
+
+    .cube-status {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .cube-status h2 {
+      font-size: 22px;
+      color: #fff;
+      text-shadow: 0 0 10px #00f0ff;
+    }
+
+    .cube-status p {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .ai-chat-box {
+      flex: 1.2;
+      background: rgba(11, 14, 27, 0.95);
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(18, 22, 38, 0.6);
+    }
+
+    .online-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #10b981;
+    }
+
+    .online-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .messages-list {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .msg {
+      max-width: 85%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .msg.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: #fff;
+      border-bottom-right-radius: 2px;
+    }
+
+    .msg.bot {
+      align-self: flex-start;
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #f8fafc;
+      border-bottom-left-radius: 2px;
+    }
+
+    .chat-input-area {
+      padding: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      gap: 10px;
+      background: rgba(11, 14, 27, 0.95);
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: #fff;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .chat-input:focus {
+      border-color: #00f0ff;
+    }
+
+    .send-btn {
+      background: linear-gradient(135deg, #00f0ff, #7c3aed);
+      border: none;
+      color: #fff;
+      padding: 0 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Bosh Menyu -->
+  <header class="top-global-nav">
+    <div class="brand-box">
+      <div class="brand-cube-mini"></div>
+      <h1 class="brand-text">AI Project</h1>
+    </div>
+    <div class="nav-toggle-btns">
+      <button class="nav-tab-btn" onclick="openGlobalTab('ai-tab')">
+        <i class="fa-solid fa-cube"></i> AI Markazi
+      </button>
+      <button class="nav-tab-btn active" onclick="openGlobalTab('compiler-tab')">
+        <i class="fa-solid fa-code"></i> Compiler
+      </button>
+    </div>
+  </header>
+
+  <div class="view-content">
+
+    <!-- 1. COMPILER BO'LIMI -->
+    <section id="compiler-tab" class="tab-section active">
+      <div class="ide-container">
+        
+        <!-- Chap menyu: HTML, JS, Python, Papka -->
+        <div class="ide-left-bar">
+          <button class="ide-mode-btn" id="btn-html" onclick="switchLanguageMode('html')" title="HTML / CSS / JS">
+            <i class="fa-brands fa-html5"></i>
+          </button>
+          <button class="ide-mode-btn" id="btn-js" onclick="switchLanguageMode('js')" title="JavaScript">
+            <i class="fa-brands fa-js"></i>
+          </button>
+          <button class="ide-mode-btn active" id="btn-py" onclick="switchLanguageMode('py')" title="Python">
+            <i class="fa-brands fa-python"></i>
+          </button>
+          <button class="ide-mode-btn" id="btn-folder" onclick="toggleSavedFilesModal()" title="Saqlangan kodlar">
+            <i class="fa-regular fa-folder"></i>
+          </button>
+        </div>
+
+        <!-- Asosiy ish maydoni -->
+        <div class="ide-workspace">
+          
+          <div class="ide-toolbar">
+            <div class="toolbar-left">
+              <!-- TUZATILGAN ORQAGA TUGMASI -->
+              <button class="round-back-btn" onclick="goBackAction()" title="Orqaga">
+                <i class="fa-solid fa-arrow-left"></i>
+              </button>
+
+              <span class="active-filename-display" id="currentFileName">main.py</span>
+              
+              <div class="html-subtabs" id="htmlSubTabs">
+                <button class="html-subtab-btn active" id="subtab-index.html" onclick="switchHtmlSubfile('index.html')">index.html</button>
+                <button class="html-subtab-btn" id="subtab-style.css" onclick="switchHtmlSubfile('style.css')">style.css</button>
+                <button class="html-subtab-btn" id="subtab-script.js" onclick="switchHtmlSubfile('script.js')">script.js</button>
+              </div>
+            </div>
+
+            <div class="toolbar-right">
+              <button class="tool-icon-btn" onclick="copyCurrentCode()" title="Nusxalash"><i class="fa-regular fa-copy"></i></button>
+              <button class="tool-icon-btn" onclick="toggleTheme()" title="Kunduzgi / Tungi rejim"><i class="fa-regular fa-moon" id="themeIcon"></i></button>
+              <button class="tool-icon-btn" onclick="saveCurrentFile()" title="Saqlash"><i class="fa-regular fa-floppy-disk"></i></button>
+              
+              <!-- BRAUZERNI KATTALASHTIRISH TUGMASI -->
+              <button class="tool-icon-btn" onclick="toggleMaximizeBrowser()" title="Brauzerni butun ekranga kattalashtirish">
+                <i class="fa-solid fa-expand" id="maximizeIcon"></i>
+              </button>
+
+              <button class="run-action-btn" onclick="executeActiveCode()">
+                <i class="fa-solid fa-play"></i> Ishga tushirish
+              </button>
+            </div>
+          </div>
+
+          <!-- Muharrir va Natija -->
+          <div class="ide-body">
+            
+            <div class="code-panel">
+              <div class="editor-line-wrapper">
+                <div class="line-numbers" id="lineNumbers">1</div>
+                <textarea id="mainEditor" class="code-textarea" spellcheck="false" placeholder="Kodingizni shu yerga yozing..."></textarea>
+              </div>
+            </div>
+
+            <!-- O'ngda: Brauzer / Terminal (Natija) -->
+            <div class="result-panel" id="resultContainer">
+              <div class="result-header">
+                <span id="resultHeaderTitle"><i class="fa-solid fa-terminal"></i> &nbsp;>_ Natija</span>
+                
+                <button class="max-exit-btn" onclick="toggleMaximizeBrowser()">
+                  <i class="fa-solid fa-compress"></i> Kichraytirish (ESC)
+                </button>
+              </div>
+              <div class="result-body">
+                <iframe id="browserPreview" class="preview-browser-frame"></iframe>
+                <div id="terminalOutput" class="terminal-console-view">Natijani ko'rish uchun kodni ishga tushiring.</div>
+              </div>
+            </div>
+
+            <!-- Saqlangan kodlar oynasi -->
+            <div class="saved-modal-overlay" id="savedModal">
+              <div class="saved-modal-header">
+                <span>Saqlangan kodlar</span>
+                <span class="storage-info">1.999 MB bo'sh / 2.000 MB</span>
+              </div>
+              <div class="saved-items-list" id="savedItemsContainer"></div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2. AI PROJECT MARKAZI -->
+    <section id="ai-tab" class="tab-section">
+      <div class="ai-view-wrapper">
+        <div class="cube-stage">
+          <div class="cosmic-cube">
+            <div class="cube-face front"><i class="fa-solid fa-brain"></i></div>
+            <div class="cube-face back"><i class="fa-solid fa-microchip"></i></div>
+            <div class="cube-face right"><i class="fa-solid fa-network-wired"></i></div>
+            <div class="cube-face left"><i class="fa-solid fa-bolt"></i></div>
+            <div class="cube-face top"><i class="fa-solid fa-code"></i></div>
+            <div class="cube-face bottom"><i class="fa-solid fa-gem"></i></div>
+          </div>
+          <div class="cube-status">
+            <h2>AI PROJECT CORE</h2>
+            <p>Har qanday savolga aniq va bexato javob beruvchi tizim</p>
+          </div>
+        </div>
+
+        <div class="ai-chat-box">
+          <div class="chat-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-robot" style="color: #00f0ff;"></i>
+              <strong>AI Project Assistant</strong>
+            </div>
+            <div class="online-indicator">
+              <span class="online-dot"></span> Faol
+            </div>
+          </div>
+          <div class="messages-list" id="chatList">
+            <div class="msg bot">
+              Assalomu alaykum! Men <strong>AI Project</strong> sun'iy intellektiman. Savolingizni bering, barchasiga aniq va bexato javob beraman!
+            </div>
+          </div>
+          <div class="chat-input-area">
+            <input type="text" id="aiInput" class="chat-input" placeholder="Savolingizni yozing..." onkeydown="if(event.key === 'Enter') handleSendAI()">
+            <button class="send-btn" id="sendBtn" onclick="handleSendAI()">
+              <i class="fa-solid fa-paper-plane"></i> Yuborish
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const CREATOR_FULL_NAME = "O'rinboy";
+
+    let editorFiles = {
+      'py': { name: 'main.py', code: `# Python dasturlash tili\nprint("Salom, O'rinboy!")\nfor i in range(1, 6):\n    print(f"Qadam: {i}")` },
+      'js': { name: 'main.js', code: `// JavaScript dasturlash tili\nlet ism = "O'rinboy";\nconsole.log("Assalomu alaykum, " + ism);\nconsole.log("AI Project Compiler ishga tushdi!");` },
+      'html': {
+        'index.html': `<!DOCTYPE html>\n<html>\n<head>\n  <title>AI Project</title>\n</head>\n<body>\n  <div style="text-align:center; padding:40px; font-family:sans-serif;">\n    <h1 style="color:#ff5414;">Salom Dunyo!</h1>\n    <p>Brauzer muvaffaqiyatli to'liq ekranga ochildi.</p>\n  </div>\n</body>\n</html>`,
+        'style.css': `body { background: #f8fafc; }`,
+        'script.js': `console.log("Brauzer ishlamoqda");`
+      }
+    };
+
+    let currentMode = 'py';
+    let currentHtmlSubfile = 'index.html';
+    let pyodideInstance = null;
+
+    const editor = document.getElementById('mainEditor');
+    const lineNumbers = document.getElementById('lineNumbers');
+    const fileNameDisplay = document.getElementById('currentFileName');
+    const terminalOutput = document.getElementById('terminalOutput');
+    const browserPreview = document.getElementById('browserPreview');
+    const resultHeaderTitle = document.getElementById('resultHeaderTitle');
+    const htmlSubTabs = document.getElementById('htmlSubTabs');
+    const resultContainer = document.getElementById('resultContainer');
+    const maximizeIcon = document.getElementById('maximizeIcon');
+
+    editor.value = editorFiles['py'].code;
+    updateLineNumbers();
+
+    /* ================= ORQAGA QAYTISH TUGMASI (TUZATILDI) ================= */
+    function goBackAction() {
+      const modal = document.getElementById('savedModal');
+      if (modal && modal.style.display === 'flex') {
+        modal.style.display = 'none';
+        return;
+      }
+
+      if (window.history.length > 1 && document.referrer) {
+        window.history.back();
+      } else {
+        openGlobalTab('ai-tab');
+      }
+    }
+
+    function updateLineNumbers() {
+      const lines = editor.value.split('\n').length;
+      let numbersHtml = '';
+      for (let i = 1; i <= lines; i++) {
+        numbersHtml += i + '<br>';
+      }
+      lineNumbers.innerHTML = numbersHtml;
+    }
+
+    editor.addEventListener('input', () => {
+      updateLineNumbers();
+      saveCurrentEditorState();
+    });
+
+    function saveCurrentEditorState() {
+      if (currentMode === 'html') {
+        editorFiles['html'][currentHtmlSubfile] = editor.value;
+      } else {
+        editorFiles[currentMode].code = editor.value;
+      }
+    }
+
+    function switchLanguageMode(mode) {
+      saveCurrentEditorState();
+      currentMode = mode;
+
+      document.querySelectorAll('.ide-mode-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(`btn-${mode}`).classList.add('active');
+
+      if (mode === 'html') {
+        htmlSubTabs.style.display = 'flex';
+        fileNameDisplay.innerText = currentHtmlSubfile;
+        editor.value = editorFiles['html'][currentHtmlSubfile];
+        browserPreview.style.display = 'block';
+        terminalOutput.style.display = 'none';
+        resultHeaderTitle.innerHTML = `<i class="fa-solid fa-globe"></i> &nbsp;Brauzer`;
+      } else {
+        htmlSubTabs.style.display = 'none';
+        browserPreview.style.display = 'none';
+        terminalOutput.style.display = 'block';
+        resultHeaderTitle.innerHTML = `<i class="fa-solid fa-terminal"></i> &nbsp;>_ Natija`;
+
+        if (mode === 'js') {
+          fileNameDisplay.innerText = 'main.js';
+          editor.value = editorFiles['js'].code;
+        } else if (mode === 'py') {
+          fileNameDisplay.innerText = 'main.py';
+          editor.value = editorFiles['py'].code;
+        }
+      }
+
+      updateLineNumbers();
+      terminalOutput.innerText = "Natijani ko'rish uchun kodni ishga tushiring.";
+    }
+
+    function switchHtmlSubfile(subfile) {
+      saveCurrentEditorState();
+      currentHtmlSubfile = subfile;
+      fileNameDisplay.innerText = subfile;
+
+      document.querySelectorAll('.html-subtab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`subtab-${subfile}`).classList.add('active');
+
+      editor.value = editorFiles['html'][subfile];
+      updateLineNumbers();
+    }
+
+    async function executeActiveCode() {
+      saveCurrentEditorState();
+
+      if (currentMode === 'html') {
+        const fullDoc = `
+          <!DOCTYPE html>
+          <html>
+            <head><style>${editorFiles['html']['style.css']}</style></head>
+            <body>
+              ${editorFiles['html']['index.html']}
+              <script>${editorFiles['html']['script.js']}<\/script>
+            </body>
+          </html>
+        `;
+        browserPreview.srcdoc = fullDoc;
+      } else if (currentMode === 'js') {
+        terminalOutput.innerText = "";
+        const originalLog = console.log;
+        console.log = function(...args) {
+          terminalOutput.innerText += args.join(' ') + '\n';
+          originalLog.apply(console, args);
+        };
+
+        try {
+          new Function(editorFiles['js'].code)();
+          if (!terminalOutput.innerText) {
+            terminalOutput.innerText = "[Dastur muvaffaqiyatli bajarildi]";
+          }
+        } catch (err) {
+          terminalOutput.innerText += "Xatolik: " + err.message;
+        } finally {
+          console.log = originalLog;
+        }
+      } else if (currentMode === 'py') {
+        terminalOutput.innerText = "Python muhiti tayyorlanmoqda, kuting...\n";
+        try {
+          if (!pyodideInstance) {
+            pyodideInstance = await loadPyodide();
+          }
+          pyodideInstance.setStdout({ batched: (str) => { terminalOutput.innerText += str + '\n'; } });
+          terminalOutput.innerText = "";
+          await pyodideInstance.runPythonAsync(editorFiles['py'].code);
+          if (!terminalOutput.innerText) {
+            terminalOutput.innerText = "[Dastur muvaffaqiyatli yakunlandi]";
+          }
+        } catch (err) {
+          terminalOutput.innerText = "Python Xatolik:\n" + err.message;
+        }
+      }
+    }
+
+    /* ================= BRAUZERNI BUTUN EKRANGA KATTALASHTIRISH ================= */
+    function toggleMaximizeBrowser() {
+      resultContainer.classList.toggle('browser-maximized');
+      
+      if (resultContainer.classList.contains('browser-maximized')) {
+        maximizeIcon.className = "fa-solid fa-compress";
+      } else {
+        maximizeIcon.className = "fa-solid fa-expand";
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && resultContainer.classList.contains('browser-maximized')) {
+        toggleMaximizeBrowser();
+      }
+    });
+
+    // Saqlangan kodlar
+    let savedStorage = JSON.parse(localStorage.getItem('ai_project_saved') || '[]');
+
+    function toggleSavedFilesModal() {
+      const modal = document.getElementById('savedModal');
+      modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+      renderSavedList();
+    }
+
+    function saveCurrentFile() {
+      saveCurrentEditorState();
+      let fname = (currentMode === 'html') ? currentHtmlSubfile : (currentMode === 'js' ? 'main.js' : 'main.py');
+      let fcode = (currentMode === 'html') ? editorFiles['html'][currentHtmlSubfile] : editorFiles[currentMode].code;
+
+      const now = new Date();
+      const dateStr = `${currentMode} - ${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+      savedStorage.unshift({ name: fname, mode: currentMode, code: fcode, date: dateStr });
+      localStorage.setItem('ai_project_saved', JSON.stringify(savedStorage));
+      alert(`"${fname}" muvaffaqiyatli saqlandi!`);
+      renderSavedList();
+    }
+
+    function renderSavedList() {
+      const cont = document.getElementById('savedItemsContainer');
+      cont.innerHTML = '';
+      if (savedStorage.length === 0) {
+        cont.innerHTML = '<div style="padding:15px; font-size:12px; color:#94a3b8; text-align:center;">Hozircha saqlangan kodlar yo\'q.</div>';
+        return;
+      }
+
+      savedStorage.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'saved-file-card';
+        card.innerHTML = `
+          <div class="saved-file-meta">
+            <span class="saved-file-title">${item.name}</span>
+            <span class="saved-file-date">${item.date}</span>
+          </div>
+          <div class="saved-actions">
+            <button class="del-btn" onclick="deleteSavedItem(${index})" title="O'chirish"><i class="fa-regular fa-trash-can"></i></button>
+            <button class="open-btn" onclick="openSavedItem(${index})">Ochish</button>
+          </div>
+        `;
+        cont.appendChild(card);
+      });
+    }
+
+    function openSavedItem(idx) {
+      const item = savedStorage[idx];
+      switchLanguageMode(item.mode);
+      if (item.mode === 'html') {
+        currentHtmlSubfile = item.name;
+        switchHtmlSubfile(item.name);
+        editorFiles['html'][item.name] = item.code;
+      } else {
+        editorFiles[item.mode].code = item.code;
+      }
+      editor.value = item.code;
+      updateLineNumbers();
+      document.getElementById('savedModal').style.display = 'none';
+    }
+
+    function deleteSavedItem(idx) {
+      if (confirm("Ushbu faylni o'chirmoqchimisiz?")) {
+        savedStorage.splice(idx, 1);
+        localStorage.setItem('ai_project_saved', JSON.stringify(savedStorage));
+        renderSavedList();
+      }
+    }
+
+    function copyCurrentCode() {
+      navigator.clipboard.writeText(editor.value);
+      alert("Kod buferga nusxalandi!");
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      const icon = document.getElementById('themeIcon');
+      if (document.body.classList.contains('dark-mode')) {
+        icon.className = 'fa-regular fa-sun';
+      } else {
+        icon.className = 'fa-regular fa-moon';
+      }
+    }
+
+    function openGlobalTab(tabId) {
+      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      
+      const targetBtn = Array.from(document.querySelectorAll('.nav-tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+      if (targetBtn) targetBtn.classList.add('active');
+    }
+
+    async function handleSendAI() {
+      const input = document.getElementById('aiInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chatList = document.getElementById('chatList');
+      const sendBtn = document.getElementById('sendBtn');
+
+      const userDiv = document.createElement('div');
+      userDiv.className = 'msg user';
+      userDiv.innerText = text;
+      chatList.appendChild(userDiv);
+      input.value = '';
+
+      const botDiv = document.createElement('div');
+      botDiv.className = 'msg bot';
+      botDiv.innerText = "AI Project o'ylanmoqda...";
+      chatList.appendChild(botDiv);
+      chatList.scrollTop = chatList.scrollHeight;
+
+      sendBtn.disabled = true;
+
+      const lower = text.toLowerCase();
+      if (
+        lower.includes('kim yaratgan') || 
+        lower.includes('yaratuvchi') || 
+        lower.includes('muallif') || 
+        lower.includes('seni kim') || 
+        lower.includes('kim qildi')
+      ) {
+        setTimeout(() => {
+          botDiv.innerText = `Meni ${CREATOR_FULL_NAME} yaratgan! Men uning maxsus ishlab chiqqan "AI Project" sun'iy intellekt tizimiman.`;
+          sendBtn.disabled = false;
+          chatList.scrollTop = chatList.scrollHeight;
+        }, 400);
+        return;
+      }
+
+      try {
+        const strictPrompt = `Siz "AI Project" nomli sun'iy intellektsiz. Yaratuvchingiz: ${CREATOR_FULL_NAME}. Har doim to'g'ri, bexato va aniq javob bering. Foydalanuvchiga hech qachon qaytarib savol bermang.`;
+        const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(text)}?system=${encodeURIComponent(strictPrompt)}`);
+        const reply = await res.text();
+        botDiv.innerText = reply;
+      } catch (e) {
+        botDiv.innerText = "Kechirasiz, javob olishda xatolik yuz berdi. Internetni tekshiring.";
+      } finally {
+        sendBtn.disabled = false;
+        chatList.scrollTop = chatList.scrollHeight;
+      }
+    }
+  </script>
+</body>
+</html>
